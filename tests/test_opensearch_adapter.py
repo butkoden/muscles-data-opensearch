@@ -39,7 +39,7 @@ class FakeOpenSearchClient:
 
     def search(self, **kwargs):
         self.searches.append(kwargs)
-        return {"hits": {"hits": [{"_id": "doc-1", "_score": 4.2, "_source": {"text": "Muscles data ports", "metadata": {"section": "docs"}}}]}}
+        return {"hits": {"hits": [{"_id": "doc-1", "_score": 4.2, "_source": {"title": "Ports", "text": "Muscles data ports", "metadata": {"section": "docs"}}}]}}
 
     def index(self, **kwargs):
         self.indexes.append(kwargs)
@@ -92,12 +92,14 @@ def test_opensearch_external_adapter_maps_search_index_delete_and_native_access(
 
     search = runtime.require_port("search.open", SearchIndexPort)
     hits = search.search_text("muscles", filters={"section": "docs"}, limit=2)
-    write = search.upsert_documents([{"id": "doc-1", "text": "Muscles data ports", "metadata": {"section": "docs"}}])
+    write = search.upsert_documents([{"id": "doc-1", "title": "Ports", "text": "Muscles data ports", "metadata": {"section": "docs"}}])
     deleted = search.delete_documents(filters={"section": ["docs", "notes"]})
 
     assert [hit.id for hit in hits] == ["doc-1"]
+    assert hits[0].title == "Ports"
     assert client.searches[0]["body"]["query"]["bool"]["filter"] == [{"term": {"metadata.section": "docs"}}]
     assert write.written == 1
+    assert client.indexes[0]["body"]["title"] == "Ports"
     assert client.indexes[0]["body"]["metadata"] == {"section": "docs"}
     assert deleted.deleted == 3
     assert client.delete_queries[0]["body"]["query"]["bool"]["filter"][0] == {"terms": {"metadata.section": ["docs", "notes"]}}

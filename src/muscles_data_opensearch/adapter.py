@@ -16,6 +16,7 @@ _CLIENT_UNSET = object()
 _RANGE_OPERATORS = {"gt", "gte", "lt", "lte"}
 _ALLOWED_OPTIONS = {
     "url",
+    "url_env",
     "username",
     "password",
     "http_auth",
@@ -235,6 +236,8 @@ class OpenSearchSearchAdapter:
             self.text_field(): str(item.get("text", "")),
             self.metadata_field(): metadata,
         }
+        if item.get("title") is not None:
+            document["title"] = str(item["title"])
         fields = item.get("fields")
         if isinstance(fields, Mapping):
             document.update(dict(fields))
@@ -263,10 +266,16 @@ class OpenSearchSearchAdapter:
         http_auth = self.config.options.get("http_auth")
         if http_auth is not None and (not isinstance(http_auth, (list, tuple)) or len(http_auth) != 2):
             raise OpenSearchConfigError("OpenSearch http_auth must contain username and password")
+        if not self.config.options.get("url") and not self.config.options.get("url_env"):
+            raise OpenSearchConfigError("OpenSearch resource requires url or url_env")
 
     def _safe_error(self, exc: Exception) -> str:
         message = str(exc)
-        for key, value in self.config.options.items():
+        try:
+            options = self.config.resolved_options()
+        except Exception:
+            options = self.config.options
+        for key, value in options.items():
             if key in {"url", "username", "password", "http_auth"} and value:
                 if isinstance(value, (list, tuple)):
                     for item in value:
@@ -376,6 +385,7 @@ def _hit_from_response(hit: Mapping[str, Any], *, text_field: str, metadata_fiel
         text=source.get(text_field),
         metadata=metadata,
         highlights=highlights,
+        title=source.get("title"),
     )
 
 
@@ -398,7 +408,10 @@ def _default_opensearch_client(config: DataResourceConfig):
     except Exception as exc:
         raise OpenSearchClientMissingError("Install opensearch-py or muscles-data-opensearch to use type=opensearch") from exc
 
-    options = config.options
+    try:
+        options = config.resolved_options()
+    except Exception as exc:
+        raise OpenSearchConfigError(str(exc)) from exc
     url = str(options["url"])
     parsed = urlsplit(url)
     kwargs: dict[str, Any] = {"hosts": [url]}
