@@ -14,6 +14,13 @@ from muscles_data.models import DataCapability, HealthResult, InspectResult, Sea
 
 _CLIENT_UNSET = object()
 _RANGE_OPERATORS = {"gt", "gte", "lt", "lte"}
+DEFAULT_INDEX_MAPPING = {
+    "properties": {
+        "text": {"type": "text"},
+        "title": {"type": "text", "fields": {"keyword": {"type": "keyword"}}},
+        "metadata": {"type": "object", "dynamic": True},
+    }
+}
 _ALLOWED_OPTIONS = {
     "url",
     "url_env",
@@ -30,6 +37,8 @@ _ALLOWED_OPTIONS = {
     "native_client",
     "text_field",
     "metadata_field",
+    "mapping",
+    "settings",
 }
 
 
@@ -66,6 +75,7 @@ class OpenSearchSearchAdapter:
         self._client_factory = client_factory
         self._client: Any = _CLIENT_UNSET
         self._lock = threading.RLock()
+        self._index_ready = False
         self.closed = False
 
     def search_text(
@@ -180,8 +190,8 @@ class OpenSearchSearchAdapter:
                     details={"index": self.index_name()},
                 )
             indices = getattr(client, "indices", None)
-            exists = True
-            if indices is not None and hasattr(indices, "exists"):
+            exists = self._index_ready
+            if not exists and indices is not None and hasattr(indices, "exists"):
                 exists = bool(indices.exists(index=self.index_name()))
         except Exception as exc:
             return HealthResult(status="failed", message=self._safe_error(exc), details={"index": self.index_name()})
@@ -256,6 +266,14 @@ class OpenSearchSearchAdapter:
                     if client is None:
                         raise OpenSearchClientMissingError("OpenSearch client is not available")
                     self._client = client
+                    try:
+                        self._ensure_index(client)
+                    except Exception:
+                        self._client = _CLIENT_UNSET
+                        close = getattr(client, "close", None)
+                        if callable(close):
+                            close()
+                        raise
         return self._client
 
     def _validate_options(self) -> None:
@@ -268,6 +286,42 @@ class OpenSearchSearchAdapter:
             raise OpenSearchConfigError("OpenSearch http_auth must contain username and password")
         if not self.config.options.get("url") and not self.config.options.get("url_env"):
             raise OpenSearchConfigError("OpenSearch resource requires url or url_env")
+        self.index_name()
+
+    def mapping(self) -> dict[str, Any]:
+        mapping = self.config.options.get("mapping")
+        if mapping is None:
+            return dict(DEFAULT_INDEX_MAPPING)
+        if not isinstance(mapping, Mapping):
+            raise OpenSearchConfigError("OpenSearch mapping must be a mapping")
+        return dict(mapping)
+
+    def _ensure_index(self, client: Any) -> None:
+        indices = getattr(client, "indices", None)
+        exists = getattr(indices, "exists", None)
+        create = getattr(indices, "create", None)
+        if not callable(exists) or not callable(create):
+            return
+        try:
+            if bool(exists(index=self.index_name())):
+                self._index_ready = True
+                return
+            body: dict[str, Any] = {"mappings": self.mapping()}
+            settings = self.config.options.get("settings")
+            if settings is not None:
+                if not isinstance(settings, Mapping):
+                    raise OpenSearchConfigError("OpenSearch settings must be a mapping")
+                body["settings"] = dict(settings)
+            create(index=self.index_name(), body=body)
+            self._index_ready = True
+        except OpenSearchConfigError:
+            raise
+        except Exception as exc:
+            message = self._safe_error(exc)
+            if "already exists" in message.lower() or "resource_already_exists" in message.lower():
+                self._index_ready = True
+                return
+            raise OpenSearchConnectionError(message) from exc
 
     def _safe_error(self, exc: Exception) -> str:
         message = str(exc)

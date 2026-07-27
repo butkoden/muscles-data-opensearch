@@ -19,12 +19,17 @@ from muscles_data_opensearch import (
 class FakeIndices:
     def __init__(self, client: "FakeOpenSearchClient") -> None:
         self.client = client
+        self.created: list[dict] = []
 
     def exists(self, *, index: str) -> bool:
         self.client.index_checks.append(index)
         if self.client.fail_health:
             raise TimeoutError("opensearch password=secret timed out")
-        return index == "docs"
+        return index == "docs" or any(item["index"] == index for item in self.created)
+
+    def create(self, **kwargs):
+        self.created.append(dict(kwargs))
+        return {"acknowledged": True}
 
 
 class FakeOpenSearchClient:
@@ -108,6 +113,31 @@ def test_opensearch_external_adapter_maps_search_index_delete_and_native_access(
     assert client.index_checks == ["docs"]
     assert runtime.close()["status"] == "ok"
     assert client.closed is True
+
+
+def test_opensearch_creates_missing_index_with_default_mapping():
+    client = FakeOpenSearchClient()
+    config = DataConfig.from_raw(
+        {
+            "data": {
+                "resources": {
+                    "search.new": {
+                        "type": "opensearch",
+                        "url": "https://opensearch.example",
+                        "index": "new-docs",
+                    }
+                }
+            }
+        }
+    )
+    catalog = DataAdapterCatalog.with_defaults()
+    catalog.register(OpenSearchSearchFactory(client_factory=lambda _config: client))
+    runtime = DataRuntime(config=config, catalog=catalog)
+
+    runtime.require_port("search.new", SearchIndexPort).search_text("first")
+
+    assert client.indices.created[0]["index"] == "new-docs"
+    assert client.indices.created[0]["body"]["mappings"]["properties"]["text"] == {"type": "text"}
 
 
 def test_opensearch_external_adapter_filters_and_safe_failures():
