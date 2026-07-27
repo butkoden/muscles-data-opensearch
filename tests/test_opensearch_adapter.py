@@ -19,12 +19,17 @@ from muscles_data_opensearch import (
 class FakeIndices:
     def __init__(self, client: "FakeOpenSearchClient") -> None:
         self.client = client
+        self.created: list[dict] = []
 
     def exists(self, *, index: str) -> bool:
         self.client.index_checks.append(index)
         if self.client.fail_health:
             raise TimeoutError("opensearch password=secret timed out")
-        return index == "docs"
+        return index == "docs" or any(item["index"] == index for item in self.created)
+
+    def create(self, **kwargs):
+        self.created.append(dict(kwargs))
+        return {"acknowledged": True}
 
 
 class FakeOpenSearchClient:
@@ -39,7 +44,7 @@ class FakeOpenSearchClient:
 
     def search(self, **kwargs):
         self.searches.append(kwargs)
-        return {"hits": {"hits": [{"_id": "doc-1", "_score": 4.2, "_source": {"text": "Muscles data ports", "metadata": {"section": "docs"}}}]}}
+        return {"hits": {"hits": [{"_id": "doc-1", "_score": 4.2, "_source": {"title": "Ports", "text": "Muscles data ports", "metadata": {"section": "docs"}}}]}}
 
     def index(self, **kwargs):
         self.indexes.append(kwargs)
@@ -92,12 +97,14 @@ def test_opensearch_external_adapter_maps_search_index_delete_and_native_access(
 
     search = runtime.require_port("search.open", SearchIndexPort)
     hits = search.search_text("muscles", filters={"section": "docs"}, limit=2)
-    write = search.upsert_documents([{"id": "doc-1", "text": "Muscles data ports", "metadata": {"section": "docs"}}])
+    write = search.upsert_documents([{"id": "doc-1", "title": "Ports", "text": "Muscles data ports", "metadata": {"section": "docs"}}])
     deleted = search.delete_documents(filters={"section": ["docs", "notes"]})
 
     assert [hit.id for hit in hits] == ["doc-1"]
+    assert hits[0].title == "Ports"
     assert client.searches[0]["body"]["query"]["bool"]["filter"] == [{"term": {"metadata.section": "docs"}}]
     assert write.written == 1
+    assert client.indexes[0]["body"]["title"] == "Ports"
     assert client.indexes[0]["body"]["metadata"] == {"section": "docs"}
     assert deleted.deleted == 3
     assert client.delete_queries[0]["body"]["query"]["bool"]["filter"][0] == {"terms": {"metadata.section": ["docs", "notes"]}}
@@ -106,6 +113,31 @@ def test_opensearch_external_adapter_maps_search_index_delete_and_native_access(
     assert client.index_checks == ["docs"]
     assert runtime.close()["status"] == "ok"
     assert client.closed is True
+
+
+def test_opensearch_creates_missing_index_with_default_mapping():
+    client = FakeOpenSearchClient()
+    config = DataConfig.from_raw(
+        {
+            "data": {
+                "resources": {
+                    "search.new": {
+                        "type": "opensearch",
+                        "url": "https://opensearch.example",
+                        "index": "new-docs",
+                    }
+                }
+            }
+        }
+    )
+    catalog = DataAdapterCatalog.with_defaults()
+    catalog.register(OpenSearchSearchFactory(client_factory=lambda _config: client))
+    runtime = DataRuntime(config=config, catalog=catalog)
+
+    runtime.require_port("search.new", SearchIndexPort).search_text("first")
+
+    assert client.indices.created[0]["index"] == "new-docs"
+    assert client.indices.created[0]["body"]["mappings"]["properties"]["text"] == {"type": "text"}
 
 
 def test_opensearch_external_adapter_filters_and_safe_failures():

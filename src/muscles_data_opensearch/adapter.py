@@ -14,8 +14,16 @@ from muscles_data.models import DataCapability, HealthResult, InspectResult, Sea
 
 _CLIENT_UNSET = object()
 _RANGE_OPERATORS = {"gt", "gte", "lt", "lte"}
+DEFAULT_INDEX_MAPPING = {
+    "properties": {
+        "text": {"type": "text"},
+        "title": {"type": "text", "fields": {"keyword": {"type": "keyword"}}},
+        "metadata": {"type": "object", "dynamic": True},
+    }
+}
 _ALLOWED_OPTIONS = {
     "url",
+    "url_env",
     "username",
     "password",
     "http_auth",
@@ -29,6 +37,8 @@ _ALLOWED_OPTIONS = {
     "native_client",
     "text_field",
     "metadata_field",
+    "mapping",
+    "settings",
 }
 
 
@@ -65,6 +75,7 @@ class OpenSearchSearchAdapter:
         self._client_factory = client_factory
         self._client: Any = _CLIENT_UNSET
         self._lock = threading.RLock()
+        self._index_ready = False
         self.closed = False
 
     def search_text(
@@ -179,8 +190,8 @@ class OpenSearchSearchAdapter:
                     details={"index": self.index_name()},
                 )
             indices = getattr(client, "indices", None)
-            exists = True
-            if indices is not None and hasattr(indices, "exists"):
+            exists = self._index_ready
+            if not exists and indices is not None and hasattr(indices, "exists"):
                 exists = bool(indices.exists(index=self.index_name()))
         except Exception as exc:
             return HealthResult(status="failed", message=self._safe_error(exc), details={"index": self.index_name()})
@@ -235,6 +246,8 @@ class OpenSearchSearchAdapter:
             self.text_field(): str(item.get("text", "")),
             self.metadata_field(): metadata,
         }
+        if item.get("title") is not None:
+            document["title"] = str(item["title"])
         fields = item.get("fields")
         if isinstance(fields, Mapping):
             document.update(dict(fields))
@@ -253,6 +266,14 @@ class OpenSearchSearchAdapter:
                     if client is None:
                         raise OpenSearchClientMissingError("OpenSearch client is not available")
                     self._client = client
+                    try:
+                        self._ensure_index(client)
+                    except Exception:
+                        self._client = _CLIENT_UNSET
+                        close = getattr(client, "close", None)
+                        if callable(close):
+                            close()
+                        raise
         return self._client
 
     def _validate_options(self) -> None:
@@ -263,10 +284,52 @@ class OpenSearchSearchAdapter:
         http_auth = self.config.options.get("http_auth")
         if http_auth is not None and (not isinstance(http_auth, (list, tuple)) or len(http_auth) != 2):
             raise OpenSearchConfigError("OpenSearch http_auth must contain username and password")
+        if not self.config.options.get("url") and not self.config.options.get("url_env"):
+            raise OpenSearchConfigError("OpenSearch resource requires url or url_env")
+        self.index_name()
+
+    def mapping(self) -> dict[str, Any]:
+        mapping = self.config.options.get("mapping")
+        if mapping is None:
+            return dict(DEFAULT_INDEX_MAPPING)
+        if not isinstance(mapping, Mapping):
+            raise OpenSearchConfigError("OpenSearch mapping must be a mapping")
+        return dict(mapping)
+
+    def _ensure_index(self, client: Any) -> None:
+        indices = getattr(client, "indices", None)
+        exists = getattr(indices, "exists", None)
+        create = getattr(indices, "create", None)
+        if not callable(exists) or not callable(create):
+            return
+        try:
+            if bool(exists(index=self.index_name())):
+                self._index_ready = True
+                return
+            body: dict[str, Any] = {"mappings": self.mapping()}
+            settings = self.config.options.get("settings")
+            if settings is not None:
+                if not isinstance(settings, Mapping):
+                    raise OpenSearchConfigError("OpenSearch settings must be a mapping")
+                body["settings"] = dict(settings)
+            create(index=self.index_name(), body=body)
+            self._index_ready = True
+        except OpenSearchConfigError:
+            raise
+        except Exception as exc:
+            message = self._safe_error(exc)
+            if "already exists" in message.lower() or "resource_already_exists" in message.lower():
+                self._index_ready = True
+                return
+            raise OpenSearchConnectionError(message) from exc
 
     def _safe_error(self, exc: Exception) -> str:
         message = str(exc)
-        for key, value in self.config.options.items():
+        try:
+            options = self.config.resolved_options()
+        except Exception:
+            options = self.config.options
+        for key, value in options.items():
             if key in {"url", "username", "password", "http_auth"} and value:
                 if isinstance(value, (list, tuple)):
                     for item in value:
@@ -376,6 +439,7 @@ def _hit_from_response(hit: Mapping[str, Any], *, text_field: str, metadata_fiel
         text=source.get(text_field),
         metadata=metadata,
         highlights=highlights,
+        title=source.get("title"),
     )
 
 
@@ -398,7 +462,10 @@ def _default_opensearch_client(config: DataResourceConfig):
     except Exception as exc:
         raise OpenSearchClientMissingError("Install opensearch-py or muscles-data-opensearch to use type=opensearch") from exc
 
-    options = config.options
+    try:
+        options = config.resolved_options()
+    except Exception as exc:
+        raise OpenSearchConfigError(str(exc)) from exc
     url = str(options["url"])
     parsed = urlsplit(url)
     kwargs: dict[str, Any] = {"hosts": [url]}

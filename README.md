@@ -57,8 +57,10 @@ data:
       verify_certs: true
 ```
 
-The adapter creates the OpenSearch client lazily on search, index/delete,
-explicit native access or `data.doctor`. Application code should use
+The adapter creates the OpenSearch client and a missing index lazily on search,
+index/delete, explicit native access or `data.doctor`. New indexes receive a
+default mapping for `text`, `title` and `metadata`; `mapping` and `settings`
+resource options customize it. Application code should use
 `SearchIndexPort`; direct client access is only an advanced escape hatch with
 `native_client: true`.
 
