@@ -1,0 +1,1084 @@
+{
+  "version": "1.0.0",
+  "schema_version": 1,
+  "project": {
+    "name": "muscles-data-opensearch",
+    "is_monorepo": false,
+    "total_files": 11,
+    "entry_points": [],
+    "tech_stack": [
+      {
+        "name": "SQLAlchemy",
+        "version": null,
+        "category": "database"
+      },
+      {
+        "name": "Python",
+        "version": null,
+        "category": "language"
+      }
+    ],
+    "entry_candidates": [],
+    "graph_mode": "flow"
+  },
+  "nodes": [
+    {
+      "id": "class:src/muscles_data_opensearch/adapter.py:OpenSearchAdapterError",
+      "type": "class",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "OpenSearchAdapterError",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "class:src/muscles_data_opensearch/adapter.py:OpenSearchClientMissingError",
+      "type": "class",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "OpenSearchClientMissingError",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "class:src/muscles_data_opensearch/adapter.py:OpenSearchConfigError",
+      "type": "class",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "OpenSearchConfigError",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "class:src/muscles_data_opensearch/adapter.py:OpenSearchConnectionError",
+      "type": "class",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "OpenSearchConnectionError",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "class:src/muscles_data_opensearch/adapter.py:OpenSearchFilterError",
+      "type": "class",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "OpenSearchFilterError",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "class:src/muscles_data_opensearch/adapter.py:OpenSearchSearchAdapter",
+      "type": "class",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "OpenSearchSearchAdapter",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "class:src/muscles_data_opensearch/adapter.py:OpenSearchSearchFactory",
+      "type": "class",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "OpenSearchSearchFactory",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "file:.github/workflows/ci.yml",
+      "type": "pipeline",
+      "filePath": ".github/workflows/ci.yml",
+      "language": "yaml",
+      "symbolCount": 0,
+      "lineCount": 46,
+      "complexity": "simple",
+      "pagerank": 0.060359,
+      "communityId": 1,
+      "tags": [
+        "config",
+        "ci"
+      ],
+      "summary": "GitHub Actions CI/CD workflow definition."
+    },
+    {
+      "id": "file:.github/workflows/release.yml",
+      "type": "pipeline",
+      "filePath": ".github/workflows/release.yml",
+      "language": "yaml",
+      "symbolCount": 0,
+      "lineCount": 28,
+      "complexity": "simple",
+      "pagerank": 0.060359,
+      "communityId": 2,
+      "tags": [
+        "config",
+        "ci"
+      ],
+      "summary": "GitHub Actions CI/CD workflow definition."
+    },
+    {
+      "id": "file:CHANGELOG.md",
+      "type": "document",
+      "filePath": "CHANGELOG.md",
+      "language": "markdown",
+      "symbolCount": 0,
+      "lineCount": 5,
+      "complexity": "simple",
+      "pagerank": 0.060359,
+      "communityId": 3,
+      "tags": [],
+      "summary": "Release history and notable changes."
+    },
+    {
+      "id": "file:README.md",
+      "type": "document",
+      "filePath": "README.md",
+      "language": "markdown",
+      "symbolCount": 0,
+      "lineCount": 61,
+      "complexity": "simple",
+      "pagerank": 0.060359,
+      "communityId": 4,
+      "tags": [],
+      "summary": "Project overview and entry point for new readers."
+    },
+    {
+      "id": "file:docs/release-candidate.md",
+      "type": "document",
+      "filePath": "docs/release-candidate.md",
+      "language": "markdown",
+      "symbolCount": 0,
+      "lineCount": 16,
+      "complexity": "simple",
+      "pagerank": 0.060359,
+      "communityId": 5,
+      "tags": [],
+      "summary": "Documentation: release-candidate.md."
+    },
+    {
+      "id": "file:pyproject.toml",
+      "type": "config",
+      "filePath": "pyproject.toml",
+      "language": "toml",
+      "symbolCount": 0,
+      "lineCount": 39,
+      "complexity": "simple",
+      "pagerank": 0.060359,
+      "communityId": 6,
+      "tags": [
+        "config"
+      ],
+      "summary": "Python project metadata, dependencies, and build configuration."
+    },
+    {
+      "id": "file:src/muscles_data_opensearch/__init__.py",
+      "type": "file",
+      "filePath": "src/muscles_data_opensearch/__init__.py",
+      "language": "python",
+      "symbolCount": 1,
+      "lineCount": 14,
+      "complexity": "simple",
+      "pagerank": 0.214275,
+      "communityId": 0,
+      "tags": [],
+      "summary": "Application module __init__ (1 symbols).",
+      "primaryOwner": "Denis Butko"
+    },
+    {
+      "id": "file:src/muscles_data_opensearch/adapter.py",
+      "type": "file",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "language": "python",
+      "symbolCount": 42,
+      "lineCount": 486,
+      "complexity": "complex",
+      "pagerank": 0.242494,
+      "communityId": 0,
+      "tags": [],
+      "summary": "Application module adapter defining OpenSearchAdapterError, OpenSearchConfigError, OpenSearchClientMissingError.",
+      "primaryOwner": "Denis Butko"
+    },
+    {
+      "id": "file:tests/test_integration 2.py",
+      "type": "file",
+      "filePath": "tests/test_integration 2.py",
+      "language": "python",
+      "symbolCount": 2,
+      "lineCount": 64,
+      "complexity": "simple",
+      "pagerank": 0.060359,
+      "communityId": 0,
+      "tags": [
+        "test"
+      ],
+      "summary": "Tests for integration 2."
+    },
+    {
+      "id": "file:tests/test_integration.py",
+      "type": "file",
+      "filePath": "tests/test_integration.py",
+      "language": "python",
+      "symbolCount": 2,
+      "lineCount": 67,
+      "complexity": "simple",
+      "pagerank": 0.060359,
+      "communityId": 0,
+      "tags": [
+        "test"
+      ],
+      "summary": "Tests for integration.",
+      "primaryOwner": "Denis Butko"
+    },
+    {
+      "id": "file:tests/test_opensearch_adapter.py",
+      "type": "file",
+      "filePath": "tests/test_opensearch_adapter.py",
+      "language": "python",
+      "symbolCount": 16,
+      "lineCount": 157,
+      "complexity": "complex",
+      "pagerank": 0.060359,
+      "communityId": 0,
+      "tags": [
+        "test"
+      ],
+      "summary": "Tests for opensearch_adapter.",
+      "primaryOwner": "Denis Butko"
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:__init__",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "__init__",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:_client_instance",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "_client_instance",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:_default_opensearch_client",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "_default_opensearch_client",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:_document_from_item",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "_document_from_item",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:_ensure_index",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "_ensure_index",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:_field_condition",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "_field_condition",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:_field_name",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "_field_name",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:_filter_query",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "_filter_query",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:_filter_sort_key",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "_filter_sort_key",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:_hit_from_response",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "_hit_from_response",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:_hits",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "_hits",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:_logical_conditions",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "_logical_conditions",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:_mapping_get",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "_mapping_get",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:_query",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "_query",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:_safe_error",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "_safe_error",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:_validate_options",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "_validate_options",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:capabilities",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "capabilities",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:close",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "close",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:create",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "create",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:delete_documents",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "delete_documents",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:health",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "health",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:index_name",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "index_name",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:inspect",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "inspect",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:mapping",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "mapping",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:metadata_field",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "metadata_field",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:native_client",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "native_client",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:opensearch_filter_from_mapping",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "opensearch_filter_from_mapping",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:search_text",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "search_text",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:text_field",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "text_field",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    },
+    {
+      "id": "function:src/muscles_data_opensearch/adapter.py:upsert_documents",
+      "type": "function",
+      "filePath": "src/muscles_data_opensearch/adapter.py",
+      "name": "upsert_documents",
+      "language": "python",
+      "tags": [],
+      "summary": ""
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/muscles_data_opensearch/__init__.py",
+      "target": "file:src/muscles_data_opensearch/adapter.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "class:src/muscles_data_opensearch/adapter.py:OpenSearchAdapterError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "class:src/muscles_data_opensearch/adapter.py:OpenSearchClientMissingError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "class:src/muscles_data_opensearch/adapter.py:OpenSearchConfigError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "class:src/muscles_data_opensearch/adapter.py:OpenSearchConnectionError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "class:src/muscles_data_opensearch/adapter.py:OpenSearchFilterError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "class:src/muscles_data_opensearch/adapter.py:OpenSearchSearchAdapter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "class:src/muscles_data_opensearch/adapter.py:OpenSearchSearchFactory",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_client_instance",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_default_opensearch_client",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_document_from_item",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_ensure_index",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_field_condition",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_field_name",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_filter_query",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_filter_sort_key",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_hit_from_response",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_hits",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_logical_conditions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_mapping_get",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_query",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_safe_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_validate_options",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:capabilities",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:close",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:create",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:delete_documents",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:health",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:index_name",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:inspect",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:mapping",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:metadata_field",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:native_client",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:opensearch_filter_from_mapping",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:search_text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:text_field",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py",
+      "target": "function:src/muscles_data_opensearch/adapter.py:upsert_documents",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchAdapter",
+      "target": "function:src/muscles_data_opensearch/adapter.py:__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchAdapter",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_client_instance",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchAdapter",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_document_from_item",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchAdapter",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_ensure_index",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchAdapter",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_filter_query",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchAdapter",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_query",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchAdapter",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_safe_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchAdapter",
+      "target": "function:src/muscles_data_opensearch/adapter.py:_validate_options",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchAdapter",
+      "target": "function:src/muscles_data_opensearch/adapter.py:close",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchAdapter",
+      "target": "function:src/muscles_data_opensearch/adapter.py:delete_documents",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchAdapter",
+      "target": "function:src/muscles_data_opensearch/adapter.py:health",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchAdapter",
+      "target": "function:src/muscles_data_opensearch/adapter.py:index_name",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchAdapter",
+      "target": "function:src/muscles_data_opensearch/adapter.py:inspect",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchAdapter",
+      "target": "function:src/muscles_data_opensearch/adapter.py:mapping",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchAdapter",
+      "target": "function:src/muscles_data_opensearch/adapter.py:metadata_field",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchAdapter",
+      "target": "function:src/muscles_data_opensearch/adapter.py:native_client",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchAdapter",
+      "target": "function:src/muscles_data_opensearch/adapter.py:search_text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchAdapter",
+      "target": "function:src/muscles_data_opensearch/adapter.py:text_field",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchAdapter",
+      "target": "function:src/muscles_data_opensearch/adapter.py:upsert_documents",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchFactory",
+      "target": "function:src/muscles_data_opensearch/adapter.py:__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchFactory",
+      "target": "function:src/muscles_data_opensearch/adapter.py:capabilities",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/muscles_data_opensearch/adapter.py::OpenSearchSearchFactory",
+      "target": "function:src/muscles_data_opensearch/adapter.py:create",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_integration 2.py",
+      "target": "file:src/muscles_data_opensearch/__init__.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_integration.py",
+      "target": "file:src/muscles_data_opensearch/__init__.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_opensearch_adapter.py",
+      "target": "file:src/muscles_data_opensearch/__init__.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ],
+  "layers": [
+    {
+      "id": "layer:application",
+      "name": "Application",
+      "description": "",
+      "nodeIds": [
+        "file:CHANGELOG.md",
+        "file:README.md",
+        "file:pyproject.toml",
+        "file:src/muscles_data_opensearch/__init__.py",
+        "file:src/muscles_data_opensearch/adapter.py"
+      ],
+      "display_order": 0,
+      "order_basis": "canonical"
+    },
+    {
+      "id": "layer:config",
+      "name": "Config",
+      "description": "",
+      "nodeIds": [
+        "file:.github/workflows/ci.yml",
+        "file:.github/workflows/release.yml"
+      ],
+      "display_order": 1,
+      "order_basis": "canonical"
+    },
+    {
+      "id": "layer:docs-tooling",
+      "name": "Docs & Tooling",
+      "description": "",
+      "nodeIds": [
+        "file:docs/release-candidate.md"
+      ],
+      "display_order": 2,
+      "order_basis": "canonical"
+    },
+    {
+      "id": "layer:test",
+      "name": "Test",
+      "description": "",
+      "nodeIds": [
+        "file:tests/test_integration 2.py",
+        "file:tests/test_integration.py",
+        "file:tests/test_opensearch_adapter.py"
+      ],
+      "display_order": 3,
+      "order_basis": "canonical"
+    }
+  ],
+  "tour": [
+    {
+      "order": 1,
+      "target_path": "README.md",
+      "page_type": "repo_overview",
+      "title": "README.md",
+      "depth": 0,
+      "kind": "overview",
+      "reason": "Start here for the end-to-end picture before diving into the code.",
+      "layer_id": "layer:application"
+    },
+    {
+      "order": 2,
+      "target_path": "src/muscles_data_opensearch/__init__.py",
+      "page_type": "file_page",
+      "title": "__init__.py",
+      "depth": 0,
+      "kind": "code",
+      "reason": "The walk's anchor \u2014 its imports fan out the widest in a repo with no single entry point.",
+      "layer_id": "layer:application"
+    },
+    {
+      "order": 3,
+      "target_path": "src/muscles_data_opensearch/adapter.py",
+      "page_type": "file_page",
+      "title": "adapter.py",
+      "depth": 1,
+      "kind": "code",
+      "reason": "Directly imported by the anchor above; a core collaborator.",
+      "layer_id": "layer:application"
+    },
+    {
+      "order": 4,
+      "target_path": "tests/test_integration 2.py",
+      "page_type": "file_page",
+      "title": "test_integration 2.py",
+      "depth": 2,
+      "kind": "code",
+      "reason": "The test suite \u2014 how the system's behavior is verified.",
+      "layer_id": "layer:test"
+    }
+  ],
+  "modules": [
+    {
+      "id": "module:application",
+      "name": "Application",
+      "path": "",
+      "layerId": "layer:application",
+      "nodeIds": [
+        "file:CHANGELOG.md",
+        "file:README.md",
+        "file:pyproject.toml",
+        "file:src/muscles_data_opensearch/__init__.py",
+        "file:src/muscles_data_opensearch/adapter.py"
+      ],
+      "wholeLayer": true,
+      "language": "markdown"
+    },
+    {
+      "id": "module:tests",
+      "name": "Test",
+      "path": "tests",
+      "layerId": "layer:test",
+      "nodeIds": [
+        "file:tests/test_integration 2.py",
+        "file:tests/test_integration.py",
+        "file:tests/test_opensearch_adapter.py"
+      ],
+      "wholeLayer": true,
+      "language": "python"
+    }
+  ]
+}

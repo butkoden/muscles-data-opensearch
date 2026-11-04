@@ -7,9 +7,9 @@ from dataclasses import asdict
 from typing import Any, Mapping
 from urllib.parse import urlsplit
 
-from muscles_data.config import DataResourceConfig
-from muscles_data.errors import DataError
-from muscles_data.models import DataCapability, HealthResult, InspectResult, SearchHit, WriteResult
+from muscles.data.config import DataResourceConfig
+from muscles.data.errors import DataError
+from muscles.data.models import DataCapability, HealthResult, InspectResult, SearchHit, WriteResult
 
 
 _CLIENT_UNSET = object()
@@ -77,6 +77,90 @@ class OpenSearchSearchAdapter:
         self._lock = threading.RLock()
         self._index_ready = False
         self.closed = False
+
+    def policy_get(self, document_id: str) -> Mapping[str, Any] | None:
+        """Read current metadata for an explicitly enabled non-atomic precheck."""
+        try:
+            response = self._client_instance().get(index=self.index_name(), id=str(document_id))
+        except Exception as exc:
+            if getattr(exc, "status_code", None) == 404 or getattr(getattr(exc, "meta", None), "status", None) == 404:
+                return None
+            raise OpenSearchConnectionError(self._safe_error(exc)) from exc
+        if _mapping_get(response, "found", True) is False:
+            return None
+        source = _mapping_get(response, "_source", {}) or {}
+        metadata = _mapping_get(source, self.metadata_field(), {})
+        return dict(metadata) if isinstance(metadata, Mapping) else {}
+
+    def policy_get_versioned(self, document_id: str):
+        try:
+            response = self._client_instance().get(index=self.index_name(), id=str(document_id))
+        except Exception as exc:
+            if getattr(exc, "status_code", None) == 404 or getattr(getattr(exc, "meta", None), "status", None) == 404:
+                return None
+            raise OpenSearchConnectionError(self._safe_error(exc)) from exc
+        if _mapping_get(response, "found", True) is False:
+            return None
+        source = _mapping_get(response, "_source", {}) or {}
+        metadata = _mapping_get(source, self.metadata_field(), {})
+        sequence, term = _mapping_get(response, "_seq_no"), _mapping_get(response, "_primary_term")
+        if type(sequence) is not int or sequence < 0 or type(term) is not int or term < 1:
+            raise OpenSearchConfigError("Atomic policy writes require sequence numbers and primary terms")
+        return (dict(metadata) if isinstance(metadata, Mapping) else {}, (sequence, term))
+
+    def policy_write_versioned(self, action, document_id, item, version):
+        from muscles.data.errors import DataWriteConflictError
+        kwargs = {"index": self.index_name(), "id": str(document_id)}
+        if version is None:
+            if action != "upsert":
+                raise ValueError("Only creation may omit a version")
+            kwargs["op_type"] = "create"
+        else:
+            kwargs.update(if_seq_no=version[0], if_primary_term=version[1])
+        try:
+            if action == "upsert":
+                self._client_instance().index(**kwargs, body=self._document_from_item(item))
+            elif action == "delete":
+                self._client_instance().delete(**kwargs)
+            else:
+                raise ValueError("Unknown policy write action")
+        except Exception as exc:
+            if getattr(exc, "status_code", None) == 409 or getattr(getattr(exc, "meta", None), "status", None) == 409:
+                raise DataWriteConflictError("Document changed during policy-protected write") from exc
+            raise OpenSearchConnectionError(self._safe_error(exc)) from exc
+
+    def policy_search_snapshot(self, query, filters, batch_size, options):
+        unsupported = set(options) - {"highlight", "highlight_fields"}
+        if unsupported:
+            raise OpenSearchFilterError("Policy snapshot does not support these search options")
+        client = self._client_instance()
+        pit_id = _mapping_get(client.create_pit(index=self.index_name(), params={"keep_alive": "1m"}), "pit_id")
+        if not pit_id:
+            raise OpenSearchConnectionError("Backend did not return a point-in-time identifier")
+        after = None
+        try:
+            while True:
+                body = {"pit": {"id": pit_id, "keep_alive": "1m"}, "query": self._query(query, filters),
+                        "size": batch_size, "sort": [{"_score": "desc"}, {"_index": "asc"}, {"_id": "asc"}]}
+                if options.get("highlight"):
+                    fields = options.get("highlight_fields", [self.text_field()])
+                    body["highlight"] = {"fields": {str(field): {} for field in fields}}
+                if after is not None:
+                    body["search_after"] = after
+                response = client.search(body=body)
+                pit_id = _mapping_get(response, "pit_id", pit_id)
+                if _mapping_get(response, "timed_out", False) or _mapping_get(_mapping_get(response, "_shards", {}), "failed", 0):
+                    raise OpenSearchConnectionError("Policy snapshot search was incomplete")
+                hits = _hits(response)
+                for hit in hits:
+                    after = _mapping_get(hit, "sort")
+                    if not after:
+                        raise OpenSearchConnectionError("Policy snapshot result has no cursor")
+                    yield _hit_from_response(hit, text_field=self.text_field(), metadata_field=self.metadata_field())
+                if len(hits) < batch_size:
+                    break
+        finally:
+            client.delete_pit(body={"pit_id": [pit_id]})
 
     def search_text(
         self,

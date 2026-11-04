@@ -1,4 +1,5 @@
 from __future__ import annotations
+from muscles.data.policy_search import PolicySearchIndex
 
 from .adapter import (
     OpenSearchAdapterError,
@@ -21,4 +22,5 @@ __all__ = [
     "OpenSearchSearchAdapter",
     "OpenSearchSearchFactory",
     "opensearch_filter_from_mapping",
+    "PolicySearchIndex",
 ]

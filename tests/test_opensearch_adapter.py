@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 import pytest
-from muscles_data.catalog import DataAdapterCatalog
-from muscles_data.config import DataConfig
-from muscles_data.models import DataCapability
-from muscles_data.ports import SearchIndexPort
-from muscles_data.runtime import DataRuntime
+from muscles.data.catalog import DataAdapterCatalog
+from muscles.data.config import DataConfig
+from muscles.data.models import DataCapability
+from muscles.data.ports import SearchIndexPort
+from muscles.data.runtime import DataRuntime
+from muscles.data.policies import DataOperationContext, DataPolicyDecision, DataPolicyPipeline, DataPredicate, DataPredicateOperator
+from muscles.data.opensearch import PolicySearchIndex
 
-from muscles_data_opensearch import (
+from muscles.data.opensearch import (
     OpenSearchClientMissingError,
     OpenSearchConnectionError,
     OpenSearchFilterError,
@@ -44,7 +46,13 @@ class FakeOpenSearchClient:
 
     def search(self, **kwargs):
         self.searches.append(kwargs)
-        return {"hits": {"hits": [{"_id": "doc-1", "_score": 4.2, "_source": {"title": "Ports", "text": "Muscles data ports", "metadata": {"section": "docs"}}}]}}
+        return {"hits": {"hits": [{"_id": "doc-1", "_score": 4.2, "sort": [4.2, "docs", "doc-1"], "_source": {"title": "Ports", "text": "Muscles data ports", "metadata": {"section": "docs"}}}]}}
+
+    def create_pit(self, **kwargs):
+        return {"pit_id": "snapshot"}
+
+    def delete_pit(self, **kwargs):
+        return {"pits": []}
 
     def index(self, **kwargs):
         self.indexes.append(kwargs)
@@ -84,6 +92,31 @@ def _runtime(client: FakeOpenSearchClient | None, url: str = "https://opensearch
     catalog = DataAdapterCatalog.with_defaults()
     catalog.register(OpenSearchSearchFactory(client_factory=lambda _config: client))
     return DataRuntime(config=DataConfig.from_raw(_config(url)), catalog=catalog)
+
+
+def test_policy_search_adds_filter_before_limit():
+    class Policy:
+        def evaluate(self, request):
+            return DataPolicyDecision(predicates=(DataPredicate("section", DataPredicateOperator.EQ, request.context.attributes["section"]),))
+
+    client = FakeOpenSearchClient()
+    runtime = _runtime(client)
+    store = PolicySearchIndex(runtime.require_port("search.open", SearchIndexPort), "search.open", policies=DataPolicyPipeline((Policy(),)), context=DataOperationContext(attributes={"section": "docs"}))
+    assert [hit.id for hit in store.search_text("muscles", limit=1)] == ["doc-1"]
+    request = client.searches[0]["body"]
+    assert request["size"] == 1
+    assert {"term": {"metadata.section": "docs"}} in request["query"]["bool"]["filter"][0]["bool"]["filter"]
+
+
+def test_versioned_policy_writes_use_concurrency_guards():
+    client = FakeOpenSearchClient()
+    client.get = lambda **kwargs: {"_source": {"metadata": {"section": "docs"}}, "_seq_no": 7, "_primary_term": 2}
+    adapter = _runtime(client).require_port("search.open", SearchIndexPort)
+    assert adapter.policy_get_versioned("x") == ({"section": "docs"}, (7, 2))
+    adapter.policy_write_versioned("upsert", "x", {"id": "x"}, (7, 2))
+    adapter.policy_write_versioned("upsert", "new", {"id": "new"}, None)
+    assert (client.indexes[0]["if_seq_no"], client.indexes[0]["if_primary_term"]) == (7, 2)
+    assert client.indexes[1]["op_type"] == "create"
 
 
 def test_opensearch_external_adapter_maps_search_index_delete_and_native_access():

@@ -27,19 +27,21 @@ OpenSearch-backed `SearchIndexPort` implementation.
 
 ## Usage
 
-Register the factory in the project composition root:
+Register this adapter once in the application composition root when building
+the shared `DataAdapterCatalog`, alongside other configured adapters:
 
 ```python
-from muscles_data.catalog import DataAdapterCatalog
-from muscles_data.ports import SearchIndexPort
-from muscles_data.runtime import DataRuntime
-from muscles_data_opensearch import OpenSearchSearchFactory
-
-catalog = DataAdapterCatalog.with_defaults()
 catalog.register(OpenSearchSearchFactory())
+```
 
-runtime = DataRuntime(config=config, catalog=catalog)
-search = runtime.require_port("search.public", SearchIndexPort)
+The `search.public` resource itself is declared in the application's central
+`data.resources` configuration shown below. A package resolves the port from
+the existing runtime; it does not build another catalog or `DataRuntime`:
+
+```python
+from muscles.data.ports import SearchIndexPort
+
+search = app.resource.connect("search.public", SearchIndexPort)
 ```
 
 Resource config stays in the project:
@@ -49,9 +51,9 @@ data:
   resources:
     search.public:
       type: opensearch
-      url: ${OPENSEARCH_URL}
-      username: ${OPENSEARCH_USER}
-      password: ${OPENSEARCH_PASSWORD}
+      url_env: OPENSEARCH_URL
+      username: !environ OPENSEARCH_USER
+      password: !environ OPENSEARCH_PASSWORD
       index: docs
       timeout: 3
       verify_certs: true
